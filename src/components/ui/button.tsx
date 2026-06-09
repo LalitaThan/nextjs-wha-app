@@ -5,11 +5,15 @@ import { Slot } from "radix-ui"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-4xl border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 active:scale-95 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
+        goldCta: "bg-gradient-to-b from-[var(--flip7-gold)] to-[var(--flip7-gold-dark)] text-primary-dark shadow-[var(--flip7-shadow-accent-glow)] hover:opacity-90",
+        coral: "bg-[var(--flip7-coral)] text-white shadow-[var(--flip7-shadow-coral-glow)] hover:bg-[var(--flip7-coral-dark)]",
+        teal: "bg-[var(--flip7-teal)] text-white shadow-[var(--flip7-shadow-teal-glow)] hover:bg-[var(--flip7-teal-dark)]",
+        skyblue: "bg-[var(--flip7-skyblue)] text-white shadow-[var(--flip7-shadow-sky-glow)] hover:opacity-90",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:bg-transparent dark:hover:bg-input/30",
         secondary:
@@ -30,6 +34,7 @@ const buttonVariants = cva(
         "icon-xs": "size-6 [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-8",
         "icon-lg": "size-10",
+        counter: "size-20 rounded-md",
       },
     },
     defaultVariants: {
@@ -38,6 +43,7 @@ const buttonVariants = cva(
     },
   }
 )
+
 
 function Button({
   className,

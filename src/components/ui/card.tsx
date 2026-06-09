@@ -5,14 +5,20 @@ import { cn } from "@/lib/utils"
 function Card({
   className,
   size = "default",
+  variant = "default",
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+}: React.ComponentProps<"div"> & { size?: "default" | "sm"; variant?: "default" | "highlighted" | "boom" }) {
   return (
     <div
       data-slot="card"
       data-size={size}
+      data-variant={variant}
       className={cn(
-        "group/card flex flex-col gap-6 overflow-hidden rounded-4xl bg-card py-6 text-sm text-card-foreground shadow-md ring-1 ring-foreground/5 has-[>img:first-child]:pt-0 data-[size=sm]:gap-4 data-[size=sm]:py-4 dark:ring-foreground/10 *:[img:first-child]:rounded-t-4xl *:[img:last-child]:rounded-b-4xl",
+        "group/card flex flex-col gap-6 overflow-hidden rounded-lg bg-card py-6 text-sm text-card-foreground shadow-md ring-1 ring-foreground/5 has-[>img:first-child]:pt-0 data-[size=sm]:gap-4 data-[size=sm]:py-4 dark:ring-foreground/10 *:[img:first-child]:rounded-t-lg *:[img:last-child]:rounded-b-lg",
+        "border-l-4",
+        variant === "default" && "border-l-[var(--flip7-teal-light)] shadow-[var(--flip7-shadow-card)]",
+        variant === "highlighted" && "border-l-[var(--flip7-gold)] bg-gradient-to-br from-white to-[var(--flip7-gold-light)] shadow-[var(--flip7-shadow-accent-glow)]",
+        variant === "boom" && "border-l-[var(--flip7-coral)] bg-gradient-to-br from-white to-[var(--flip7-coral-light)] shadow-[var(--flip7-shadow-coral-glow)] animate-pulse",
         className
       )}
       {...props}

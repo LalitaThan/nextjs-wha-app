@@ -52,3 +52,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Docker
 - Multi-stage build with Prisma client generation step before Next.js build.
 - Outputs Next.js standalone mode (`server.js`) with Prisma artifacts copied.
+
+## ข้อกำหนดหลัก
+- แยก TypeScript Type ทุกอย่าง ออกไปไว้ที่โฟลเดอร์ src/types
+- การตั้งชื่อไฟล์ TypeScript (.ts) ให้ตั้งค่าตามตัวอย่าง คือ course-service.ts

@@ -12,19 +12,19 @@ metadata:
 
 ```bash
 # 1. Install Deps
-npm install
+[ ] npm install
 
 # 2.Copy env
-cp .env.example .env
+[ ] cp .env.example .env
 
 # 3. pull DB Schema (Prisma ORM)
-npx prisma db pull
+[ ] npx prisma db pull
 
 # 4. Generate Prisma Client
-npx prisma generate
+[ ] npx prisma generate
 
 # 5. Check lint
-npm run dev
+[ ] npm run dev
 ```
 
 ## Gotchas

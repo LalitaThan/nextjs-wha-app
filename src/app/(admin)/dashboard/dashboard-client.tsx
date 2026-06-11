@@ -40,8 +40,9 @@ export default function DashboardClient() {
     try {
       const res = await fetch("/api/admin/stats");
       if (!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลสถิติได้");
-      const data: AdminStats = await res.json();
-      setStats(data);
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      setStats(json.data);
       setStatsError(null);
     } catch (err) {
       setStatsError(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
@@ -54,8 +55,9 @@ export default function DashboardClient() {
     try {
       const res = await fetch(`/api/admin/revenue?period=${p}`);
       if (!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลรายได้");
-      const data: RevenuePoint[] = await res.json();
-      setRevenue(data);
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      setRevenue(json.data);
     } catch {
       setRevenue([]);
     } finally {
@@ -67,8 +69,9 @@ export default function DashboardClient() {
     try {
       const res = await fetch("/api/admin/orders?limit=5");
       if (!res.ok) throw new Error("ไม่สามารถโหลดข้อมูลคำสั่งซื้อได้");
-      const data = await res.json();
-      setOrders(data.orders);
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+      setOrders(json.data);
       setOrdersError(null);
     } catch (err) {
       setOrdersError(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");

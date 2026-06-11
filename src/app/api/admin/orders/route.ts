@@ -1,19 +1,22 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-guard";
+import type { ApiResponse } from "@/types/api";
+import type { AdminOrderItem } from "@/types/admin";
 
 export async function GET(request: Request) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const admin = await requireAdmin();
 
-  if (!session || (session.user as any).role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  if (!admin) {
+    return NextResponse.json<ApiResponse<never>>(
+      { success: false, error: "Unauthorized" },
+      { status: 403 }
+    );
   }
 
   const { searchParams } = new URL(request.url);
-  const limit = parseInt(searchParams.get("limit") || "5", 10);
+  const rawLimit = parseInt(searchParams.get("limit") || "5", 10);
+  const limit = Number.isFinite(rawLimit) && rawLimit > 0 ? rawLimit : 5;
 
   try {
     const orders = await prisma.orders.findMany({
@@ -27,7 +30,7 @@ export async function GET(request: Request) {
       },
     });
 
-    const result = orders.map((order) => {
+    const result: AdminOrderItem[] = orders.map((order) => {
       const itemCount = order.order_items?.length || 0;
       return {
         id: order.id,
@@ -39,9 +42,15 @@ export async function GET(request: Request) {
       };
     });
 
-    return NextResponse.json({ orders: result });
+    return NextResponse.json<ApiResponse<AdminOrderItem[]>>(
+      { success: true, data: result },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("[ADMIN_ORDERS_ERROR]", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json<ApiResponse<never>>(
+      { success: false, error: "เกิดข้อผิดพลาด กรุณาลองใหม่" },
+      { status: 500 }
+    );
   }
 }

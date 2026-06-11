@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-guard";
+import type { ApiResponse } from "@/types/api";
+import type { RevenuePoint } from "@/types/admin";
 
 export async function GET(request: Request) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const admin = await requireAdmin();
 
-  if (!session || (session.user as any).role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  if (!admin) {
+    return NextResponse.json<ApiResponse<never>>(
+      { success: false, error: "Unauthorized" },
+      { status: 403 }
+    );
   }
 
   const { searchParams } = new URL(request.url);
@@ -17,7 +19,7 @@ export async function GET(request: Request) {
 
   try {
     const now = new Date();
-    let startDate = new Date();
+    const startDate = new Date();
 
     if (period === "7d") {
       startDate.setDate(now.getDate() - 7);
@@ -54,14 +56,20 @@ export async function GET(request: Request) {
       });
     });
 
-    const result = Array.from(revenueMap.entries()).map(([date, data]) => ({
+    const result: RevenuePoint[] = Array.from(revenueMap.entries()).map(([date, data]) => ({
       date,
       ...data,
     }));
 
-    return NextResponse.json(result);
+    return NextResponse.json<ApiResponse<RevenuePoint[]>>(
+      { success: true, data: result },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("[ADMIN_REVENUE_ERROR]", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json<ApiResponse<never>>(
+      { success: false, error: "เกิดข้อผิดพลาด กรุณาลองใหม่" },
+      { status: 500 }
+    );
   }
 }

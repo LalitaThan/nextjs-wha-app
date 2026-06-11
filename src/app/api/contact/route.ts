@@ -2,8 +2,6 @@ import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 import { contactSchema } from '@/lib/validations/contact';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -16,6 +14,15 @@ export async function POST(req: Request) {
       }, { status: 400 });
     }
 
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json({
+        success: false,
+        error: 'ระบบส่งอีเมลยังไม่ได้ตั้งค่า กรุณาลองใหม่อีกครั้ง',
+      }, { status: 500 });
+    }
+
+    const resend = new Resend(apiKey);
     const { name, email, message } = result.data;
 
     await resend.emails.send({

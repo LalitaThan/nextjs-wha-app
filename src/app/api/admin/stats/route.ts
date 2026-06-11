@@ -1,15 +1,24 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
+import { requireAdmin } from "@/lib/admin-guard";
+import type { ApiResponse } from "@/types/api";
+
+type StatsData = {
+  totalUsers: number;
+  totalProducts: number;
+  pendingOrders: number;
+  todayOrders: number;
+  todaySales: number;
+};
 
 export async function GET() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const admin = await requireAdmin();
 
-  if (!session || (session.user as any).role !== "admin") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  if (!admin) {
+    return NextResponse.json<ApiResponse<never>>(
+      { success: false, error: "Unauthorized" },
+      { status: 403 }
+    );
   }
 
   try {
@@ -43,15 +52,23 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({
+    const data: StatsData = {
       totalUsers,
       totalProducts,
       pendingOrders,
       todayOrders: todayOrdersStats._count.id || 0,
       todaySales: Number(todayOrdersStats._sum.total_amount || 0),
-    });
+    };
+
+    return NextResponse.json<ApiResponse<StatsData>>(
+      { success: true, data },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("[ADMIN_STATS_ERROR]", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json<ApiResponse<never>>(
+      { success: false, error: "เกิดข้อผิดพลาด กรุณาลองใหม่" },
+      { status: 500 }
+    );
   }
 }

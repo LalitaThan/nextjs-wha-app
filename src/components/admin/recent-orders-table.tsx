@@ -11,7 +11,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import type { AdminOrderItem } from "@/types/admin";
 
-const statusMap: Record<AdminOrderItem["status"], { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+type StatusConfig = { label: string; variant: "default" | "secondary" | "destructive" | "outline" };
+
+const statusMap: Record<"delivered" | "received" | "processing", StatusConfig> = {
   delivered: { label: "จัดส่งแล้ว", variant: "default" },
   received: { label: "ได้รับแล้ว", variant: "secondary" },
   processing: { label: "กำลังดำเนินการ", variant: "outline" },
@@ -55,13 +57,17 @@ function RecentOrdersTable({ orders, loading }: RecentOrdersTableProps) {
           </TableRow>
         ) : (
           orders.map((order) => {
-            const status = statusMap[order.status];
+            const statusConfig = order.status ? statusMap[order.status] : null;
             return (
               <TableRow key={order.id}>
                 <TableCell className="font-medium">#{order.id}</TableCell>
                 <TableCell>{order.customerName}</TableCell>
                 <TableCell>
-                  <Badge variant={status.variant}>{status.label}</Badge>
+                  {statusConfig ? (
+                    <Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
+                  ) : (
+                    <Badge variant="outline">ไม่ระบุ</Badge>
+                  )}
                 </TableCell>
                 <TableCell className="text-right">
                   {formatCurrency(order.totalAmount)}

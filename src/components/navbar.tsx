@@ -47,6 +47,11 @@ const Navbar = async () => {
           {
             session && (
               <>
+                {session.user.role === "admin" && (
+                  <Button asChild variant="outline" size="sm">
+                    <Link href="/dashboard">Dashboard</Link>
+                  </Button>
+                )}
                 <div className="flex items-center mr-4">
                   สวัสดี, {session.user.name}
                 </div>

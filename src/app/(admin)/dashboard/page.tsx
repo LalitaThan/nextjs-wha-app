@@ -1,14 +1,11 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { requireAdmin } from "@/lib/admin-guard";
 import DashboardClient from "./dashboard-client";
 
 export default async function AdminDashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const admin = await requireAdmin();
 
-  if (!session || (session.user as any).role !== "admin") {
+  if (!admin) {
     redirect("/");
   }
 

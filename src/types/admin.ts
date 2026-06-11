@@ -17,7 +17,7 @@ export type AdminOrderItem = {
   date: string;
   customerName: string;
   totalAmount: number;
-  status: "delivered" | "received" | "processing";
+  status: "delivered" | "received" | "processing" | null;
   itemCount: number;
 };
 
